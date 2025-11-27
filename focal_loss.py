@@ -1,5 +1,8 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 # ========================
-# 2. FOCAL LOSS WITH CLASS WEIGHTS
+# FOCAL LOSS WITH CLASS WEIGHTS
 # ========================
 class FocalLoss(nn.Module):
     def __init__(self, alpha=None, gamma=2, reduction='mean'):
