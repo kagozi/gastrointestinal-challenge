@@ -5,7 +5,7 @@ from torchvision import transforms
 import numpy as np
 import torch
 import tqdm
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, accuracy_score, f1_score, confusion_matrix, roc_auc_score
 from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -153,3 +153,26 @@ def plot_training_history(history, model_name='', save_path='training_history.pn
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"Training history saved to {save_path}")
+    
+    
+def compute_all_metrics(y_true, y_pred, y_scores):
+    """Compute comprehensive metrics"""
+    y_true_bin = label_binarize(y_true, classes=range(NUM_CLASSES))
+    
+    # AUROC per class
+    auroc_scores = []
+    for i in range(NUM_CLASSES):
+        try:
+            auroc = roc_auc_score(y_true_bin[:, i], y_scores[:, i])
+            auroc_scores.append(auroc)
+        except:
+            auroc_scores.append(0.0)
+    
+    metrics = {
+        'accuracy': accuracy_score(y_true, y_pred),
+        'f1_macro': f1_score(y_true, y_pred, average='macro'),
+        'macro_auc': np.mean(auroc_scores),
+        'auroc_per_class': auroc_scores,
+        'confusion_matrix': confusion_matrix(y_true, y_pred)
+    }
+    return metrics
