@@ -10,7 +10,7 @@ from sklearn.metrics import (
     confusion_matrix, classification_report
 )
 from sklearn.preprocessing import label_binarize
-from configs import CLASSES, NUM_CLASSES
+from configs import CLASSES, NUM_CLASSES, RESULTS_PATH
 from models import GIClassifier
 from focal_loss import FocalLoss
 from utils import (
@@ -231,7 +231,7 @@ def train_single_model(config, train_loader, val_loader, device, val_labels):
     print(f"  Macro AUC: {metrics['macro_auc']:.4f}")
     
     # Save visualizations
-    output_dir = f'results_{model_name}'
+    output_dir = f'{RESULTS_PATH}results_{model_name}'
     os.makedirs(output_dir, exist_ok=True)
     
     plot_confusion_matrix(metrics['confusion_matrix'], CLASSES, 
