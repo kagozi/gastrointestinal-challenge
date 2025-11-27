@@ -5,6 +5,11 @@ from torchvision import transforms
 import numpy as np
 import torch
 import tqdm
+from sklearn.metrics import roc_curve, auc
+from sklearn.preprocessing import label_binarize
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 from configs import CLASSES, NUM_CLASSES
 # ========================
 # Dataset Class
@@ -68,3 +73,83 @@ def compute_class_weights(dataset, num_classes):
     total_samples = len(dataset)
     class_weights = total_samples / (num_classes * class_counts)
     return torch.FloatTensor(class_weights)
+
+
+# ========================
+# VISUALIZATION FUNCTIONS WITH MODEL NAME
+# ========================
+def plot_confusion_matrix(cm, classes, model_name='', save_path='confusion_matrix.png'):
+    """Plot and save confusion matrix with model name"""
+    plt.figure(figsize=(12, 10))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+                xticklabels=classes, yticklabels=classes,
+                cbar_kws={'label': 'Count'})
+    title = f'Confusion Matrix - {model_name}' if model_name else 'Confusion Matrix'
+    plt.title(title, fontsize=16, pad=20)
+    plt.ylabel('True Label', fontsize=12)
+    plt.xlabel('Predicted Label', fontsize=12)
+    plt.xticks(rotation=45, ha='right')
+    plt.yticks(rotation=0)
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"Confusion matrix saved to {save_path}")
+
+def plot_roc_curves(y_true, y_probs, classes, model_name='', save_path='roc_curves.png'):
+    """Plot ROC curves with model name"""
+    y_true_bin = label_binarize(y_true, classes=range(NUM_CLASSES))
+    
+    plt.figure(figsize=(12, 8))
+    colors = plt.cm.tab10(np.linspace(0, 1, NUM_CLASSES))
+    
+    for i, color in zip(range(NUM_CLASSES), colors):
+        try:
+            fpr, tpr, _ = roc_curve(y_true_bin[:, i], y_probs[:, i])
+            roc_auc = auc(fpr, tpr)
+            plt.plot(fpr, tpr, color=color, lw=2, 
+                    label=f'{classes[i]} (AUC = {roc_auc:.3f})')
+        except:
+            continue
+    
+    plt.plot([0, 1], [0, 1], 'k--', lw=2, label='Random Classifier')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate', fontsize=12)
+    plt.ylabel('True Positive Rate', fontsize=12)
+    title = f'ROC Curves - {model_name}' if model_name else 'ROC Curves - Per Class'
+    plt.title(title, fontsize=16, pad=20)
+    plt.legend(loc="lower right", fontsize=10)
+    plt.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"ROC curves saved to {save_path}")
+
+def plot_training_history(history, model_name='', save_path='training_history.png'):
+    """Plot training history with model name"""
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
+    
+    # Loss
+    ax1.plot(history['train_loss'], label='Train Loss', marker='o')
+    ax1.plot(history['val_loss'], label='Val Loss', marker='s')
+    ax1.set_xlabel('Epoch', fontsize=12)
+    ax1.set_ylabel('Loss', fontsize=12)
+    title = f'Loss - {model_name}' if model_name else 'Training and Validation Loss'
+    ax1.set_title(title, fontsize=14)
+    ax1.legend()
+    ax1.grid(alpha=0.3)
+    
+    # Accuracy
+    ax2.plot(history['train_acc'], label='Train Acc', marker='o')
+    ax2.plot(history['val_acc'], label='Val Acc', marker='s')
+    ax2.set_xlabel('Epoch', fontsize=12)
+    ax2.set_ylabel('Accuracy (%)', fontsize=12)
+    title = f'Accuracy - {model_name}' if model_name else 'Training and Validation Accuracy'
+    ax2.set_title(title, fontsize=14)
+    ax2.legend()
+    ax2.grid(alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"Training history saved to {save_path}")
