@@ -5,10 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
 import torch
-import torch.nn.functional as F
-from collections import defaultdict
-import json
-import torch.optim as optim
+
 
 from sklearn.metrics import (
     accuracy_score, f1_score, roc_auc_score, 
