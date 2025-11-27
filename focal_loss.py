@@ -1,0 +1,28 @@
+# ========================
+# 2. FOCAL LOSS WITH CLASS WEIGHTS
+# ========================
+class FocalLoss(nn.Module):
+    def __init__(self, alpha=None, gamma=2, reduction='mean'):
+        """
+        Focal Loss for addressing class imbalance
+        Args:
+            alpha: class weights (tensor of shape [num_classes])
+            gamma: focusing parameter (default: 2)
+            reduction: 'mean' or 'sum'
+        """
+        super(FocalLoss, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+        self.reduction = reduction
+        
+    def forward(self, inputs, targets):
+        ce_loss = F.cross_entropy(inputs, targets, reduction='none', weight=self.alpha)
+        pt = torch.exp(-ce_loss)
+        focal_loss = ((1 - pt) ** self.gamma) * ce_loss
+        
+        if self.reduction == 'mean':
+            return focal_loss.mean()
+        elif self.reduction == 'sum':
+            return focal_loss.sum()
+        else:
+            return focal_loss
