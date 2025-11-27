@@ -10,7 +10,7 @@ from sklearn.metrics import (
     confusion_matrix, classification_report
 )
 from sklearn.preprocessing import label_binarize
-from configs import CLASSES, NUM_CLASSES, RESULTS_PATH
+from configs import CLASSES, NUM_CLASSES, RESULTS_PATH, NUM_EPOCHS
 from models import GIClassifier
 from focal_loss import FocalLoss
 from utils import (
@@ -163,11 +163,24 @@ def train_single_model(config, train_loader, val_loader, device, val_labels):
     # Initialize model
     model = GIClassifier(model_name=timm_name, num_classes=NUM_CLASSES, pretrained=True).to(device)
     
-    # Loss function
+   # Loss function
     if loss_type == 'focal':
-        class_weights = compute_class_weights(train_loader.dataset, NUM_CLASSES).to(device)
-        criterion = FocalLoss(alpha=class_weights, gamma=2)
-        print(f"Using Focal Loss with class weights: {class_weights.cpu().numpy()}")
+        # Check class distribution
+        class_counts = np.bincount(train_loader.dataset.labels, minlength=NUM_CLASSES)
+        imbalance_ratio = class_counts.max() / class_counts.min()
+        
+        print(f"Class distribution: {class_counts}")
+        print(f"Imbalance ratio: {imbalance_ratio:.2f}:1")
+        
+        # Use class weights only if severe imbalance (>3:1 ratio)
+        if imbalance_ratio > 3.0:
+            class_weights = compute_class_weights(train_loader.dataset, NUM_CLASSES).to(device)
+            criterion = FocalLoss(alpha=class_weights, gamma=2)
+            print(f"Using Focal Loss WITH class weights (severe imbalance detected)")
+            print(f"Class weights: {class_weights.cpu().numpy()}")
+        else:
+            criterion = FocalLoss(alpha=None, gamma=2)
+            print(f"Using Focal Loss WITHOUT class weights (balanced enough)")
     else:
         criterion = nn.CrossEntropyLoss()
         print("Using Cross Entropy Loss")
@@ -186,7 +199,6 @@ def train_single_model(config, train_loader, val_loader, device, val_labels):
     best_model_path = f'best_{model_name}.pth'
     
     # Training loop
-    NUM_EPOCHS = 1
     for epoch in range(NUM_EPOCHS):
         print(f"\nEpoch {epoch+1}/{NUM_EPOCHS}")
         

@@ -12,3 +12,4 @@ ENSEMBLE_PATH = '../santosh_lab/shared/KagoziA/gi/results/ensemble_results/'
 CLASSES = sorted(os.listdir(f'{DATASET_PATH}/'))
 NUM_CLASSES = len(CLASSES)
 BATCH_SIZE = 32
+NUM_EPOCHS = 30
