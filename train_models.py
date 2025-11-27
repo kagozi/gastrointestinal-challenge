@@ -129,6 +129,9 @@ def evaluate_model(y_true, y_pred, y_probs):
         'classification_report': report
     }
     
+# ========================
+# 6. SINGLE MODEL TRAINING FUNCTION
+# ========================
 def train_single_model(config, train_loader, val_loader, device, val_labels):
     """Train a single model with given configuration"""
     model_name = config['name']
@@ -183,7 +186,7 @@ def train_single_model(config, train_loader, val_loader, device, val_labels):
     best_model_path = f'best_{model_name}.pth'
     
     # Training loop
-    NUM_EPOCHS = 30
+    NUM_EPOCHS = 1
     for epoch in range(NUM_EPOCHS):
         print(f"\nEpoch {epoch+1}/{NUM_EPOCHS}")
         
@@ -216,7 +219,7 @@ def train_single_model(config, train_loader, val_loader, device, val_labels):
     # Load best model for evaluation
     model.load_state_dict(torch.load(best_model_path))
     _, _, val_preds, _, val_probs = validate(model, val_loader, criterion, device, model_name)
-    
+        
     final_preds = val_probs.argmax(axis=1)
     
     # Compute metrics
