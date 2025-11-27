@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-import tqdm
+from tqdm import tqdm
 import os
 import torch.nn as nn
 import torch.nn.functional as F

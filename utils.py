@@ -4,7 +4,6 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 import numpy as np
 import torch
-import tqdm
 from sklearn.metrics import roc_curve, auc, accuracy_score, f1_score, confusion_matrix, roc_auc_score
 from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
