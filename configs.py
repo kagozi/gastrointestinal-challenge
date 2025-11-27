@@ -6,7 +6,7 @@ warnings.filterwarnings('ignore')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using device: {device}")
 
-DATASET_PATH = '../datasets/ECG/gastrovision-4/Gastrovision 4 class/'
+DATASET_PATH = '../datasets/gi/Gastrovision 4 class/'
 RESULTS_PATH = '../santosh_lab/shared/KagoziA/gi/results/'
 ENSEMBLE_PATH = '../santosh_lab/shared/KagoziA/gi/results/ensemble_results/'
 CLASSES = sorted(os.listdir(f'{DATASET_PATH}/'))
