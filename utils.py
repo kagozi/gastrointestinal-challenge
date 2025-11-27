@@ -4,6 +4,7 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 import numpy as np
 import torch
+import tqdm
 from configs import CLASSES, NUM_CLASSES
 # ========================
 # Dataset Class
@@ -67,3 +68,28 @@ def compute_class_weights(dataset, num_classes):
     total_samples = len(dataset)
     class_weights = total_samples / (num_classes * class_counts)
     return torch.FloatTensor(class_weights)
+
+def train_epoch(model, dataloader, criterion, optimizer, device, model_name=''):
+    model.train()
+    running_loss = 0.0
+    correct = 0
+    total = 0
+    
+    pbar = tqdm(dataloader, desc=f'Training {model_name}')
+    for images, labels in pbar:
+        images, labels = images.to(device), labels.to(device)
+        
+        optimizer.zero_grad()
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+        
+        running_loss += loss.item()
+        _, predicted = outputs.max(1)
+        total += labels.size(0)
+        correct += predicted.eq(labels).sum().item()
+        
+        pbar.set_postfix({'loss': running_loss/len(dataloader), 'acc': 100.*correct/total})
+    
+    return running_loss/len(dataloader), 100.*correct/total
