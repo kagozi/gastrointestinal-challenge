@@ -1,6 +1,6 @@
 import timm
 import torch.nn as nn
-from configs import DATASET_PATH, CLASSES, NUM_CLASSES
+from config import DATASET_PATH, CLASSES, NUM_CLASSES
 # ========================
 # Model Definition
 # ========================

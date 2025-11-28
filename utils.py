@@ -9,7 +9,7 @@ from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from configs import CLASSES, NUM_CLASSES
+from config import CLASSES, NUM_CLASSES
 # ========================
 # Dataset Class
 # ========================

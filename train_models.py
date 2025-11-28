@@ -10,7 +10,7 @@ from sklearn.metrics import (
     confusion_matrix, classification_report
 )
 from sklearn.preprocessing import label_binarize
-from configs import CLASSES, NUM_CLASSES, RESULTS_PATH, NUM_EPOCHS
+from config import CLASSES, NUM_CLASSES, RESULTS_PATH, NUM_EPOCHS
 from models import GIClassifier
 from focal_loss import FocalLoss
 from utils import (

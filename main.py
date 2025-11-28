@@ -4,7 +4,7 @@ import numpy as np
 import json
 from train_models import train_single_model
 from torch.utils.data import DataLoader
-from configs import ENSEMBLE_PATH, CLASSES, DATASET_PATH, RESULTS_PATH, BATCH_SIZE, device, configs
+from config import ENSEMBLE_PATH, CLASSES, DATASET_PATH, RESULTS_PATH, BATCH_SIZE, device, configs
 from utils import GIDataset, train_transform, val_transform
 from tests_ensemble import create_ensemble
 def main():
@@ -33,9 +33,9 @@ def main():
     
     # Train all models
     model_results = {}
-    for config in configs:
-        result = train_single_model(config, train_loader, val_loader, device, val_labels)
-        model_results[config['name']] = result
+    for cfg in configs:
+        result = train_single_model(cfg, train_loader, val_loader, device, val_labels)
+        model_results[cfg['name']] = result
     
     # Create comparison table
     print("\n" + "="*80)

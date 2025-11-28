@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from configs import ENSEMBLE_PATH
+from config import ENSEMBLE_PATH
 from utils import plot_confusion_matrix, plot_roc_curves, compute_all_metrics
 
 def create_ensemble(model_results, y_true, classes, method='average', top_k=None):
