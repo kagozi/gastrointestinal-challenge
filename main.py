@@ -3,24 +3,13 @@ import numpy as np
 import json
 from train_models import train_single_model
 from torch.utils.data import DataLoader
-from configs import ENSEMBLE_PATH, CLASSES, DATASET_PATH, RESULTS_PATH, BATCH_SIZE, device
+from configs import ENSEMBLE_PATH, CLASSES, DATASET_PATH, RESULTS_PATH, BATCH_SIZE, device, configs
 from utils import GIDataset, train_transform, val_transform
 from tests_ensemble import create_ensemble
 def main():
     """Main function to train multiple models and create ensembles"""
     os.makedirs(ENSEMBLE_PATH, exist_ok=True)
     os.makedirs(RESULTS_PATH, exist_ok=True)
-    # Define model configurations
-    configs = [
-        {'model': 'ResNet50', 'name': 'ResNet50-CE', 'loss': 'ce'},
-        {'model': 'ResNet50', 'name': 'ResNet50-Focal', 'loss': 'focal'},
-        {'model': 'EfficientNet', 'name': 'EfficientNet-Focal', 'loss': 'focal'},
-        {'model': 'EfficientNet', 'name': 'EfficientNet-CE', 'loss': 'ce'},
-        {'model': 'ViT', 'name': 'ViT-CE', 'loss': 'ce'},
-        {'model': 'ViT', 'name': 'ViT-Focal', 'loss': 'focal'},
-        {'model': 'SwinTransformer', 'name': 'Swin-CE', 'loss': 'ce'},
-        {'model': 'SwinTransformer', 'name': 'Swin-Focal', 'loss': 'focal'},
-    ]
     
     # Create datasets
     print("Loading datasets...")
