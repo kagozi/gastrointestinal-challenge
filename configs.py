@@ -11,7 +11,7 @@ RESULTS_PATH = '../santosh_lab/shared/KagoziA/gi/results/'
 ENSEMBLE_PATH = '../santosh_lab/shared/KagoziA/gi/results/ensemble_results/'
 CLASSES = sorted(os.listdir(f'{DATASET_PATH}/'))
 NUM_CLASSES = len(CLASSES)
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 NUM_EPOCHS = 30
 
 # Define model configurations
