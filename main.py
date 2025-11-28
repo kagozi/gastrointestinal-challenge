@@ -1,4 +1,5 @@
 import os
+import torch
 import numpy as np
 import json
 from train_models import train_single_model
@@ -13,12 +14,20 @@ def main():
     
     # Create datasets
     print("Loading datasets...")
+    # Reduce num_workers if experiencing hangs
+    num_workers = 2 if torch.cuda.is_available() else 0
     train_dataset = GIDataset(DATASET_PATH, transform=train_transform, mode='train')
     val_dataset = GIDataset(DATASET_PATH, transform=val_transform, mode='val')
     
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
-    
+    # train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+    # val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, 
+                             num_workers=num_workers, pin_memory=True, 
+                             persistent_workers=True if num_workers > 0 else False)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, 
+                           num_workers=num_workers, pin_memory=True,
+                           persistent_workers=True if num_workers > 0 else False)
+
     # Get true labels for ensemble
     val_labels = np.array(val_dataset.labels)
     

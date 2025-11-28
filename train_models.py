@@ -41,6 +41,13 @@ def train_epoch(model, dataloader, criterion, optimizer, device, model_name=''):
         
         pbar.set_postfix({'loss': running_loss/len(dataloader), 'acc': 100.*correct/total})
     
+    # Close progress bar explicitly
+    pbar.close()
+    
+    # Clear cache after training
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    
     return running_loss/len(dataloader), 100.*correct/total
 
 def validate(model, dataloader, criterion, device, model_name=''):
